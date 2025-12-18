@@ -18,3 +18,8 @@
   color: #999;
   text-transform: uppercase;
 }
+.blue-error {
+  text-decoration: underline;
+  text-decoration-color: #3b82f6; /* bleu */
+  text-decoration-style: wavy;
+}

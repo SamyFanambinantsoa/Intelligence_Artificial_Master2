@@ -14,6 +14,7 @@ ENV/
 venv*/
 env*/
 
+/node_modules
 # Distribution / packaging
 build/
 dist/
