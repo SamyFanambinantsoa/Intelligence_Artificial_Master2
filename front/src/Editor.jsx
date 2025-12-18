@@ -1,28 +1,55 @@
-import React, { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { forwardRef, useLayoutEffect, useRef } from 'react';
 import Quill from 'quill';
+import 'quill/dist/quill.snow.css';
 
-const Editor = forwardRef(({ readOnly, defaultValue, onSelectionChange, onTextChange }, ref) => {
-  const containerRef = useRef(null);
+const Editor = forwardRef(
+  ({ readOnly = false, defaultValue, onTextChange }, ref) => {
+    const containerRef = useRef(null);
 
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const editorContainer = container.appendChild(container.ownerDocument.createElement('div'));
-    const quill = new Quill(editorContainer, { theme: 'snow' });
+    useLayoutEffect(() => {
+      const container = containerRef.current;
+      if (!container) return;
 
-    ref.current = quill; // On assigne l'instance à la ref parente
+      const editorDiv = document.createElement('div');
+      container.appendChild(editorDiv);
 
-    if (defaultValue) {
-      quill.setContents(defaultValue);
-    }
+      const quill = new Quill(editorDiv, {
+        theme: 'snow',
+        readOnly,
+        modules: {
+          toolbar: true
+        }
+      });
 
-    return () => {
-      ref.current = null;
-      container.innerHTML = '';
-    };
-  }, [ref]);
+      // 🔑 Exposer l'instance à App.jsx
+      ref.current = quill;
 
-  return <div ref={containerRef}></div>;
-});
+      if (defaultValue) {
+        quill.setContents(defaultValue);
+      }
+
+      if (onTextChange) {
+        quill.on('text-change', onTextChange);
+      }
+
+      return () => {
+        ref.current = null;
+        container.innerHTML = '';
+      };
+    }, [ref]);
+
+    return (
+      <div
+        ref={containerRef}
+        style={{
+          height: '300px',
+          border: '1px solid #ccc',
+          borderRadius: '8px'
+        }}
+      />
+    );
+  }
+);
 
 Editor.displayName = 'Editor';
 export default Editor;
